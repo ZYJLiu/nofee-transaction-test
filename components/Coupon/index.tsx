@@ -1,7 +1,7 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 
 const Coupon = ({ nft, json }: any) => {
-    const tos = json?.attributes[0]?.value;
+    const tos = json.attributes !== undefined ? json?.attributes[0]?.value : "";
     // console.log(nft, json);
     // console.log(json?.attributes[0]?.value);
     return (

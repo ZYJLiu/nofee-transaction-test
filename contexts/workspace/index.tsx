@@ -11,7 +11,7 @@ const programId = new PublicKey(idl.metadata.address);
 interface WorkSpace {
     connection?: Connection;
     provider?: AnchorProvider;
-    program?: Program;
+    program?: Program<TokenRewardsCoupons>;
 }
 
 const WorkspaceProvider = ({ children }: any) => {
