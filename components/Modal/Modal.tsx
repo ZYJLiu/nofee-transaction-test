@@ -21,11 +21,11 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
   useEffect(() => {
     // window.location is only available in the browser, so create the URL in here
     const { location } = window;
-    // const params = new URLSearchParams();
-    // params.append("mint", mint);
-    // params.append("reference", reference.toString());
-    const apiUrl = `${location.protocol}//${location.host}/api/solpay`;
-    console.log(apiUrl);
+    const params = new URLSearchParams();
+    params.append("mint", mint);
+    params.append("reference", reference.toString());
+    const apiUrl = `${location.protocol}//${location.host}/api/solpay${params.toString()}`;
+    // console.log(apiUrl);
 
     const urlParams: TransactionRequestURLFields = {
       link: new URL(apiUrl),
@@ -40,30 +40,7 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
       qrRef.current.innerHTML = "";
       qr.append(qrRef.current);
     }
-  }, [mint]);
-
-  // return (
-  //   <>
-  //     <div ref={qrRef} />
-  //     <Modal isOpen={isOpen} onClose={onClose}>
-  //       <ModalOverlay />
-  //       <ModalContent maxWidth="570px">
-  //         <ModalHeader>Modal Title</ModalHeader>
-  //         <ModalCloseButton />
-  //         <ModalBody>
-  //           {/* <Flex ref={qrRef} /> */}
-  //           {/* <div ref={qrRef} /> */}
-  //         </ModalBody>
-
-  //         <ModalFooter>
-  //           <Button colorScheme="blue" mr={3} onClick={onClose}>
-  //             Close
-  //           </Button>
-  //         </ModalFooter>
-  //       </ModalContent>
-  //     </Modal>
-  //   </>
-  // );
+  }, [mint, reference]);
 
   return (
     <>
