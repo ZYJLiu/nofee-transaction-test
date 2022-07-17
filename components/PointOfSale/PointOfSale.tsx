@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from "react";
 import { Flex, useDisclosure } from "@chakra-ui/react";
 import Coupon from "../Coupon";
 import { Metaplex } from "@metaplex-foundation/js";
-import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { Connection, clusterApiUrl, PublicKey, Keypair } from "@solana/web3.js";
 import { useWorkspace } from "../../contexts/workspace";
 import BN from "bn.js";
 import {
@@ -59,7 +60,10 @@ const PointOfSale = () => {
         },
       ]);
 
-      if (!merchants || merchants.length == 0) return;
+      const programId = workspace.program?.programId;
+      const program = workspace.program;
+
+      if (!merchants || merchants.length == 0 || !programId || !program) return;
 
       // Grab the merchant data
       const merchant = merchants[0].publicKey;
@@ -72,23 +76,21 @@ const PointOfSale = () => {
         // Find the PDA associated with that promoCount:
         const key = new BN(i);
         const bytes = key.toArrayLike(Buffer, "be", 8);
-        const [promoAddress, promoBump] = await PublicKey.findProgramAddress(
-          [merchant.toBuffer(), bytes],
-          workspace.program?.programId
-        );
+        const [promoAddress, promoBump] = await PublicKey.findProgramAddress([merchant.toBuffer(), bytes], programId);
 
         // fetch the account data at that address
-        const promoAccount = await workspace.program?.account.promo.fetch(promoAddress);
+        const promoAccount = await program.account.promo.fetch(promoAddress);
 
         // add the promo to our list of promoAccounts
         promoAccounts.push(promoAccount);
       }
 
-      const promoMints = promoAccounts?.map((promoAccount) => promoAccount?.mint);
+      const promoMints = promoAccounts.map((promoAccount) => promoAccount?.mint);
 
       // Fetch all of the NFT accounts
+
       const nftAccounts = await Promise.all(
-        promoMints?.map(async (promoMint: PublicKey) => await metaplex.nfts().findByMint(promoMint))
+        promoMints.map(async (promoMint: PublicKey) => await metaplex.nfts().findByMint(promoMint))
       );
 
       // Filtering stupid NFTs I made, this can be deleted later...
