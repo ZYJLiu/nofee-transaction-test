@@ -17,7 +17,6 @@ import {
   TransactionRequestURLFields,
 } from "@solana/pay";
 import QrModal from "../Modal";
-import { workspace } from "@project-serum/anchor";
 
 const connection = new Connection(clusterApiUrl("devnet"));
 const metaplex = new Metaplex(connection);

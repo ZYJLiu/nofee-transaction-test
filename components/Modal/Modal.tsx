@@ -10,13 +10,23 @@ import {
   Text,
   Flex,
 } from "@chakra-ui/react";
-import { createQR, encodeURL, TransactionRequestURLFields } from "@solana/pay";
+import {
+  createQR,
+  encodeURL,
+  findReference,
+  FindReferenceError,
+  TransactionRequestURLFields,
+  ValidateTransferError,
+} from "@solana/pay";
 import { Keypair } from "@solana/web3.js";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useWorkspace } from "../../contexts/workspace";
 
 const QrModal = ({ onClose, isOpen, mint }: any) => {
   const qrRef = useRef<HTMLDivElement>(null);
   const reference = useMemo(() => Keypair.generate().publicKey, []);
+  const [confirmed, setConfirmed] = useState(false);
+  const workspace = useWorkspace();
 
   useEffect(() => {
     // window.location is only available in the browser, so create the URL in here
@@ -24,7 +34,7 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
     const params = new URLSearchParams();
     params.append("mint", mint);
     params.append("reference", reference.toString());
-    const apiUrl = `${location.protocol}//${location.host}/api/solpay${params.toString()}`;
+    const apiUrl = `${location.protocol}//${location.host}/api/solpay?${params.toString()}`;
     // console.log(apiUrl);
 
     const urlParams: TransactionRequestURLFields = {
@@ -34,13 +44,44 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
     };
 
     const solanaUrl = encodeURL(urlParams);
-    console.log(solanaUrl);
+
     const qr = createQR(solanaUrl, 512, "transparent");
     if (qrRef.current) {
       qrRef.current.innerHTML = "";
       qr.append(qrRef.current);
     }
   }, [mint, reference]);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const connection = workspace.connection;
+
+        if (!connection) return;
+
+        const signatureInfo = await findReference(connection, reference, { finality: "confirmed" });
+
+        /* TODO: Confirm valid transaction here */
+
+        setConfirmed(true);
+      } catch (e) {
+        if (e instanceof FindReferenceError) {
+          // No transaction found yet, ignore this error
+          return;
+        }
+        if (e instanceof ValidateTransferError) {
+          // Transaction is invalid
+          console.error("Transaction is invalid", e);
+          return;
+        }
+        console.error("Unknown error", e);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
@@ -65,8 +106,18 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
         display={isOpen ? "flex" : "none"}
         flexDirection="column"
       >
+        <Flex display={confirmed ? "flex" : "none"}>
+          <Text>Confirmed Transaction!</Text>
+        </Flex>
         <div ref={qrRef} />
-        <Button onClick={onClose}>Close</Button>
+        <Button
+          onClick={() => {
+            setConfirmed(false);
+            onClose();
+          }}
+        >
+          Close
+        </Button>
       </Flex>
     </>
   );

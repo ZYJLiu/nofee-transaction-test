@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as spl from "@solana/spl-token";
 
@@ -53,8 +53,8 @@ async function post(req: NextApiRequest, res: NextApiResponse<MakeTransactionOut
 
     const buyerPK = new PublicKey(account);
 
-    //TODO: Grab this from the params
-    const mint = Keypair.generate().publicKey;
+    /* Using dummy tx for now
+    const mint = {req.query}
 
     // Build a transaction that burns 1 of this NFT
     const { blockhash } = await connection.getLatestBlockhash("finalized");
@@ -70,6 +70,25 @@ async function post(req: NextApiRequest, res: NextApiResponse<MakeTransactionOut
     });
 
     transaction.add(burnIx);
+    */
+
+    const { blockhash } = await connection.getLatestBlockhash("finalized");
+    const transaction = new Transaction();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = buyerPK;
+    const transferIx = SystemProgram.transfer({
+      fromPubkey: buyerPK,
+      lamports: 5_000_000,
+      toPubkey: Keypair.generate().publicKey,
+    });
+    transferIx.keys.push({
+      pubkey: new PublicKey(reference),
+      isSigner: false,
+      isWritable: false,
+    });
+
+    transaction.add(transferIx);
+
     const serializedTx = transaction.serialize({ requireAllSignatures: false });
     const base64 = serializedTx.toString("base64");
 
