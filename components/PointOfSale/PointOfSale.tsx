@@ -30,9 +30,9 @@ const PointOfSale = () => {
   const workspace = useWorkspace();
 
   // Specify the merchants key
-  // const merchantKey = new PublicKey("EzEV6RerD5yTVSD8qAV4X3igfQwVYRYSYDFT3BPBwHDm");
+  const merchantKey = new PublicKey("EzEV6RerD5yTVSD8qAV4X3igfQwVYRYSYDFT3BPBwHDm");
   // const merchantKey = new PublicKey("DuvMcXUBThbWRPmVhnpTsUU9jgh2rBk1EySdM2rsBP5U");
-  const merchantKey = new PublicKey("2Dbi1BTTVFeL8KD5r9sUxxdyjUbwFCGQ2eEWNpdvrYWs");
+  // const merchantKey = new PublicKey("2Dbi1BTTVFeL8KD5r9sUxxdyjUbwFCGQ2eEWNpdvrYWs");
 
   useEffect(() => {
     const fetchData = async () => {

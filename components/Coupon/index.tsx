@@ -8,7 +8,7 @@ const Coupon = ({ nft, json, setMint, onOpen }: any) => {
     <Flex
       flexDirection="column"
       width="400px"
-      height="500px"
+      height="550px"
       backgroundColor="gray.100"
       alignItems="center"
       borderRadius="20px"
