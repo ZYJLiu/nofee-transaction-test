@@ -20,7 +20,9 @@ const Coupon = ({ nft, json, setMint, onOpen }: any) => {
       textAlign="center"
       cursor="pointer"
     >
-      <Text fontSize="32px">{json.name}</Text>
+      <Text fontSize="32px" marginTop="20px">
+        {json.name}
+      </Text>
       <Image src={json.image} alt="image" height="300px" />
       <Text>{json.description}</Text>
 
