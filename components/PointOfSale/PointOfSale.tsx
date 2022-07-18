@@ -23,19 +23,6 @@ const metaplex = new Metaplex(connection);
 
 const mint = new PublicKey("6tt9mDtF1gxfPU1qxqYSD6kVEpB3DVw3kkNXz1j5e3g4");
 
-// metaplex
-//     .nfts()
-//     .findByMint(mint)
-//     .then((data) => console.log(data));
-
-// fetch("https://raw.githubusercontent.com/juniv/Point-Of-Sale/main/data/burger.json")
-//     .then((res) => res.json())
-//     .then((data) => console.log(data));
-
-// fetch("https://jsonkeeper.com/b/VQVR")
-//     .then((res) => res.json())
-//     .then((data) => console.log(data));
-
 const PointOfSale = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [NFTs, setNFTs] = useState<any[]>([]);
@@ -110,9 +97,6 @@ const PointOfSale = () => {
 
     fetchData();
   }, [merchantKey.toString()]);
-
-  // console.log(qrRef);
-  console.log(mint);
 
   return (
     <Flex width="100%" height="100vh">

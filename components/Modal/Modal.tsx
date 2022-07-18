@@ -21,12 +21,14 @@ import {
 import { Keypair } from "@solana/web3.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useWorkspace } from "../../contexts/workspace";
+import Confirmed from "../Confirmed";
 
 const QrModal = ({ onClose, isOpen, mint }: any) => {
   const qrRef = useRef<HTMLDivElement>(null);
-  const reference = useMemo(() => Keypair.generate().publicKey, []);
+  const [reference, setReference] = useState(Keypair.generate().publicKey);
   const [confirmed, setConfirmed] = useState(false);
   const workspace = useWorkspace();
+  const [reset, setReset] = useState(0);
 
   useEffect(() => {
     // window.location is only available in the browser, so create the URL in here
@@ -64,6 +66,8 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
         /* TODO: Confirm valid transaction here */
 
         setConfirmed(true);
+        setReference(Keypair.generate().publicKey);
+        console.log("Succeeded!");
       } catch (e) {
         if (e instanceof FindReferenceError) {
           // No transaction found yet, ignore this error
@@ -81,7 +85,7 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [reference.toString()]);
 
   return (
     <>
@@ -106,10 +110,8 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
         display={isOpen ? "flex" : "none"}
         flexDirection="column"
       >
-        <Flex display={confirmed ? "flex" : "none"}>
-          <Text>Confirmed Transaction!</Text>
-        </Flex>
-        <div ref={qrRef} />
+        {confirmed && <Confirmed />}
+        <Flex display={confirmed ? "none" : "flex"} ref={qrRef} />
         <Button
           onClick={() => {
             setConfirmed(false);
