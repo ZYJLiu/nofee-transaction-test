@@ -17,13 +17,21 @@ const Coupon = ({ nft, json, setMint, onOpen }: any) => {
         setMint(nft.mint.toString());
         onOpen();
       }}
+      textAlign="center"
+      cursor="pointer"
     >
       <Text fontSize="32px">{json.name}</Text>
       <Image src={json.image} alt="image" height="300px" />
       <Text>{json.description}</Text>
 
-      <Text fontSize="20px">Terms of Service:</Text>
-      <Text>{tos}</Text>
+      <Text fontSize="20px" marginTop="15px">
+        Restrictions:
+      </Text>
+      <Text>Limit 1 per customer etc.</Text>
+      <Text fontSize="20px" marginTop="15px">
+        Terms of Service:
+      </Text>
+      <Text>Example terms of service goes here.</Text>
     </Flex>
   );
 };

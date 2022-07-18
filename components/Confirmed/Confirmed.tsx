@@ -19,7 +19,7 @@ const Confirmed = () => {
   return (
     <Flex margin="20px" flexDirection="column" alignItems="center">
       <Text margin="20px" fontSize="20px">
-        Coupon Successfully Redeemed!
+        Coupon Redeemed Successfully!
       </Text>
       <CircularProgressbar
         value={percentage}
