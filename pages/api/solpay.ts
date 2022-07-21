@@ -2,6 +2,7 @@
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as spl from "@solana/spl-token";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
 
 type Data = {
   name: string;
@@ -53,8 +54,14 @@ async function post(req: NextApiRequest, res: NextApiResponse<MakeTransactionOut
 
     const buyerPK = new PublicKey(account);
 
-    /* Using dummy tx for now
-    const mint = {req.query}
+    const { mint } = req.query;
+
+    if (!mint) {
+      res.status(400).json({ error: "No mint provided" });
+      return;
+    }
+
+    const mintPK = new PublicKey(mint);
 
     // Build a transaction that burns 1 of this NFT
     const { blockhash } = await connection.getLatestBlockhash("finalized");
@@ -62,7 +69,9 @@ async function post(req: NextApiRequest, res: NextApiResponse<MakeTransactionOut
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = buyerPK;
 
-    const burnIx = spl.createBurnCheckedInstruction(buyerPK, mint, buyerPK, 1, 0);
+    const tokenAccountPK = await getAssociatedTokenAddress(mintPK, buyerPK);
+
+    const burnIx = spl.createBurnCheckedInstruction(tokenAccountPK, mintPK, buyerPK, 1, 0);
     burnIx.keys.push({
       pubkey: new PublicKey(reference),
       isSigner: false,
@@ -70,24 +79,8 @@ async function post(req: NextApiRequest, res: NextApiResponse<MakeTransactionOut
     });
 
     transaction.add(burnIx);
-    */
 
-    const { blockhash } = await connection.getLatestBlockhash("finalized");
-    const transaction = new Transaction();
-    transaction.recentBlockhash = blockhash;
-    transaction.feePayer = buyerPK;
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: buyerPK,
-      lamports: 5_000_000,
-      toPubkey: Keypair.generate().publicKey,
-    });
-    transferIx.keys.push({
-      pubkey: new PublicKey(reference),
-      isSigner: false,
-      isWritable: false,
-    });
-
-    transaction.add(transferIx);
+    // console.log("MintPK:", mint, "AccountPK:", account, "TokenAccountPK:", tokenAccountPK.toString());
 
     const serializedTx = transaction.serialize({ requireAllSignatures: false });
     const base64 = serializedTx.toString("base64");
