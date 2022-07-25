@@ -1,9 +1,12 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
+interface Attribute {
+  trait_type: string;
+  value: string;
+}
 
 const Coupon = ({ nft, json, setMint, onOpen }: any) => {
-  const tos = json.attributes !== undefined ? json?.attributes[0]?.value : "";
-  // console.log(nft, json);
-  // console.log(json?.attributes[0]?.value);
+  const attributes = json.attributes ?? [];
+
   return (
     <Flex
       flexDirection="column"
@@ -24,16 +27,16 @@ const Coupon = ({ nft, json, setMint, onOpen }: any) => {
         {json.name}
       </Text>
       <Image src={json.image} alt="image" height="300px" />
-      <Text>{json.description}</Text>
+      <Text mt="5px">{json.description}</Text>
 
-      <Text fontSize="20px" marginTop="15px">
-        Restrictions:
-      </Text>
-      <Text>Limit 1 per customer etc.</Text>
-      <Text fontSize="20px" marginTop="15px">
-        Terms of Service:
-      </Text>
-      <Text>Example terms of service goes here.</Text>
+      {attributes.map((attribute: Attribute, ind: number) => (
+        <Flex key={ind} flexDirection="column">
+          <Text fontSize="20px" marginTop="15px">
+            {attribute.trait_type}:
+          </Text>
+          <Text>{attribute.value}</Text>
+        </Flex>
+      ))}
     </Flex>
   );
 };

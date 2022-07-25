@@ -67,19 +67,14 @@ const PointOfSale = () => {
         promoMints.map(async (promoMint: PublicKey) => await metaplex.nfts().findByMint(promoMint))
       );
 
-      // Filtering stupid NFTs I made, this can be deleted later...
-      const validNFTs = nftAccounts.filter(
-        (nftData) => nftData.name !== "name" && !nftData.uri.startsWith("https://jsonkeeper.com/b/VQVR")
-      );
-
       // Retrieve the data stored in the NFT uri
-      const responses = await Promise.all(validNFTs.map(async (nft) => await fetch(`${nft.uri}`)));
+      const responses = await Promise.all(nftAccounts.map(async (nft) => await fetch(`${nft.uri}`)));
 
       // parse the data
       const jsons = await Promise.all(responses.map(async (response) => await response.json()));
 
       // join data into an object and then store it in the state
-      const nftData = validNFTs.map((nft, ind) => ({ nft: nft, json: jsons[ind] }));
+      const nftData = nftAccounts.map((nft, ind) => ({ nft: nft, json: jsons[ind] }));
       setNFTs(nftData);
     };
 
