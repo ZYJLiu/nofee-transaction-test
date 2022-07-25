@@ -18,7 +18,7 @@ const PointOfSale = () => {
   const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
   const [NFTs, setNFTs] = useState<any[]>([]);
   const [mint, setMint] = useState("");
-  const [merchantAddr, setMerchantAddr] = useState("EK8cufTtDZEBUEKQPNELo8P9uM8Fi3FbmUjbt7kjjNPm");
+  const [merchantAddr, setMerchantAddr] = useState("2wZQ9Cco4qm5Sydekzdbz2uB3naJsehFKDW9qJVmnYLi");
   const workspace = useWorkspace();
   const merchantKey = useMemo(() => new PublicKey(merchantAddr), [merchantAddr]);
 
@@ -83,6 +83,7 @@ const PointOfSale = () => {
       setNFTs(nftData);
     };
 
+    console.log("Refetching");
     fetchData();
   }, [merchantKey.toString()]);
 
