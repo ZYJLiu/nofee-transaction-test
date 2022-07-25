@@ -16,6 +16,7 @@ import {
   findReference,
   FindReferenceError,
   TransactionRequestURLFields,
+  validateTransfer,
   ValidateTransferError,
 } from "@solana/pay";
 import { Keypair } from "@solana/web3.js";
@@ -63,7 +64,7 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
 
         const signatureInfo = await findReference(connection, reference, { finality: "confirmed" });
 
-        /* TODO: Confirm valid transaction here */
+        /* TODO: Confirm valid transaction here. Probably just fetch balance beforehand and afterhand of the NFT */
 
         setConfirmed(true);
         setReference(Keypair.generate().publicKey);

@@ -1,39 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Flex, useDisclosure } from "@chakra-ui/react";
 import Coupon from "../Coupon";
 import { Metaplex } from "@metaplex-foundation/js";
-import { Connection, clusterApiUrl, PublicKey, Keypair } from "@solana/web3.js";
+import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
 import { useWorkspace } from "../../contexts/workspace";
 import BN from "bn.js";
-import {
-  createQR,
-  encodeURL,
-  TransferRequestURLFields,
-  findReference,
-  validateTransfer,
-  FindReferenceError,
-  ValidateTransferError,
-  TransactionRequestURLFields,
-} from "@solana/pay";
 import QrModal from "../Modal";
+import { QuestionIcon } from "@chakra-ui/icons";
+import Settings from "../Settings";
 
 const connection = new Connection(clusterApiUrl("devnet"));
 const metaplex = new Metaplex(connection);
 
-const mint = new PublicKey("6tt9mDtF1gxfPU1qxqYSD6kVEpB3DVw3kkNXz1j5e3g4");
-
 const PointOfSale = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isSettingsOpen, onOpen: onSettingsOpen, onClose: onSettingsClose } = useDisclosure();
   const [NFTs, setNFTs] = useState<any[]>([]);
   const [mint, setMint] = useState("");
+  const [merchantAddr, setMerchantAddr] = useState("EK8cufTtDZEBUEKQPNELo8P9uM8Fi3FbmUjbt7kjjNPm");
   const workspace = useWorkspace();
-
-  // Specify the merchants key
-  const merchantKey = new PublicKey("EK8cufTtDZEBUEKQPNELo8P9uM8Fi3FbmUjbt7kjjNPm");
-  // const merchantKey = new PublicKey("EzEV6RerD5yTVSD8qAV4X3igfQwVYRYSYDFT3BPBwHDm"); This one was for the old idl
-  // const merchantKey = new PublicKey("DuvMcXUBThbWRPmVhnpTsUU9jgh2rBk1EySdM2rsBP5U");
-  // const merchantKey = new PublicKey("2Dbi1BTTVFeL8KD5r9sUxxdyjUbwFCGQ2eEWNpdvrYWs");
+  const merchantKey = useMemo(() => new PublicKey(merchantAddr), [merchantAddr]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,9 +88,19 @@ const PointOfSale = () => {
 
   return (
     <Flex width="100%" height="100vh">
+      <Flex position="absolute" right={25} top={25}>
+        <QuestionIcon onClick={onSettingsOpen} cursor="pointer" />
+      </Flex>
+
+      <Settings
+        isOpen={isSettingsOpen}
+        onClose={onSettingsClose}
+        merchantAddr={merchantAddr}
+        setMerchantAddr={setMerchantAddr}
+      />
       <QrModal onClose={onClose} isOpen={isOpen} mint={mint} />
 
-      <Flex flexWrap="wrap">
+      <Flex flexWrap="wrap" width="94%">
         {NFTs.map((nft, ind) => (
           <Coupon key={ind} {...nft} setMint={setMint} onOpen={onOpen} />
         ))}
