@@ -1,15 +1,5 @@
-import {
-  Button,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  ModalFooter,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Text,
-  Flex,
-} from "@chakra-ui/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Flex } from "@chakra-ui/react";
 import {
   createQR,
   encodeURL,
@@ -20,7 +10,7 @@ import {
   ValidateTransferError,
 } from "@solana/pay";
 import { Keypair } from "@solana/web3.js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWorkspace } from "../../contexts/workspace";
 import Confirmed from "../Confirmed";
 
@@ -29,7 +19,6 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
   const [reference, setReference] = useState(Keypair.generate().publicKey);
   const [confirmed, setConfirmed] = useState(false);
   const workspace = useWorkspace();
-  const [reset, setReset] = useState(0);
 
   useEffect(() => {
     // window.location is only available in the browser, so create the URL in here
@@ -38,7 +27,6 @@ const QrModal = ({ onClose, isOpen, mint }: any) => {
     params.append("mint", mint);
     params.append("reference", reference.toString());
     const apiUrl = `${location.protocol}//${location.host}/api/solpay?${params.toString()}`;
-    // console.log(apiUrl);
 
     const urlParams: TransactionRequestURLFields = {
       link: new URL(apiUrl),
