@@ -1,3 +1,3 @@
-import QrModal from "./Modal";
+import QrModal from "./Modal"
 
-export default QrModal;
+export default QrModal

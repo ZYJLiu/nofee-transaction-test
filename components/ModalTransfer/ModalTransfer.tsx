@@ -13,10 +13,11 @@ import { Keypair, Connection, clusterApiUrl } from "@solana/web3.js"
 import { useEffect, useRef, useState } from "react"
 import Confirmed from "../Confirmed"
 
-const QrModal = ({ onClose, isOpen }: any) => {
+const QrModalTransfer = ({ onClose, isOpen }: any) => {
   const qrRef = useRef<HTMLDivElement>(null)
   const [reference, setReference] = useState(Keypair.generate().publicKey)
   const [confirmed, setConfirmed] = useState(false)
+  console.log()
 
   useEffect(() => {
     // window.location is only available in the browser, so create the URL in here
@@ -25,7 +26,7 @@ const QrModal = ({ onClose, isOpen }: any) => {
     params.append("reference", reference.toString())
     const apiUrl = `${location.protocol}//${
       location.host
-    }/api/solpay?${params.toString()}`
+    }/api/solpaytransfer?${params.toString()}`
 
     const urlParams: TransactionRequestURLFields = {
       link: new URL(apiUrl),
@@ -115,4 +116,4 @@ const QrModal = ({ onClose, isOpen }: any) => {
   )
 }
 
-export default QrModal
+export default QrModalTransfer

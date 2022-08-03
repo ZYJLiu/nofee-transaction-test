@@ -7,7 +7,17 @@ import {
   Transaction,
 } from "@solana/web3.js"
 import type { NextApiRequest, NextApiResponse } from "next"
-import * as spl from "@solana/spl-token"
+import {
+  TokenAccountNotFoundError,
+  TokenInvalidAccountOwnerError,
+  createAssociatedTokenAccountInstruction,
+  getAccount,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  Account,
+  createTransferInstruction,
+  createTransferCheckedInstruction,
+} from "@solana/spl-token"
 import { getAssociatedTokenAddress } from "@solana/spl-token"
 import base58 from "bs58"
 
@@ -75,32 +85,72 @@ async function post(
     transaction.feePayer = payer.publicKey
     console.log(payer.publicKey.toString())
 
-    const tokenAccountPK = await getAssociatedTokenAddress(mintPK, buyerPK)
-
-    const burnIx = spl.createBurnCheckedInstruction(
-      tokenAccountPK,
+    const receiverTokenAddress = await getAssociatedTokenAddress(
       mintPK,
+      buyerPK
+    )
+
+    const senderTokenAddress = await getAssociatedTokenAddress(
+      mintPK,
+      payer.publicKey
+    )
+
+    const createAccountInstruction = createAssociatedTokenAccountInstruction(
+      payer.publicKey,
+      receiverTokenAddress,
       buyerPK,
+      mintPK,
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+
+    let buyer: Account
+    try {
+      buyer = await getAccount(
+        connection,
+        receiverTokenAddress,
+        "confirmed",
+        TOKEN_PROGRAM_ID
+      )
+    } catch (error: unknown) {
+      if (
+        error instanceof TokenAccountNotFoundError ||
+        error instanceof TokenInvalidAccountOwnerError
+      ) {
+        try {
+          transaction.add(createAccountInstruction)
+        } catch (error: unknown) {}
+      } else {
+        throw error
+      }
+    }
+
+    const sendTokenInstruction = createTransferCheckedInstruction(
+      senderTokenAddress, // source
+      mintPK,
+      receiverTokenAddress, // dest
+      payer.publicKey,
       1000000,
-      6
+      6,
+      [payer],
+      TOKEN_PROGRAM_ID
     )
-    burnIx.keys.push({
-      pubkey: new PublicKey(reference),
-      isSigner: false,
-      isWritable: false,
-    })
 
-    transaction.add(burnIx)
+    sendTokenInstruction.keys.push(
+      {
+        pubkey: new PublicKey(reference),
+        isSigner: false,
+        isWritable: false,
+      },
+      {
+        pubkey: buyerPK,
+        isSigner: true,
+        isWritable: false,
+      }
+    )
+
+    transaction.add(sendTokenInstruction)
     transaction.partialSign(payer)
-
-    console.log(
-      "MintPK:",
-      mintPK.toString(),
-      "AccountPK:",
-      account,
-      "TokenAccountPK:",
-      tokenAccountPK.toString()
-    )
 
     const serializedTx = transaction.serialize({ requireAllSignatures: false })
     const base64 = serializedTx.toString("base64")
