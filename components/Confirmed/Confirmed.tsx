@@ -1,25 +1,25 @@
-import { Flex, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
+import { Flex, Text } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar"
+import "react-circular-progressbar/dist/styles.css"
 
 const Confirmed = () => {
-  const [percentage, setPercentage] = useState(0);
-  const [text, setText] = useState("✅");
+  const [percentage, setPercentage] = useState(0)
+  const [text, setText] = useState("✅")
 
   useEffect(() => {
-    setPercentage(0);
-    const t1 = setTimeout(() => setPercentage(100), 100);
+    setPercentage(0)
+    const t1 = setTimeout(() => setPercentage(100), 100)
 
     return () => {
-      clearTimeout(t1);
-    };
-  }, []);
+      clearTimeout(t1)
+    }
+  }, [])
 
   return (
     <Flex margin="20px" flexDirection="column" alignItems="center">
       <Text margin="20px" fontSize="20px">
-        Coupon Redeemed Successfully!
+        Confirmed
       </Text>
       <CircularProgressbar
         value={percentage}
@@ -29,7 +29,7 @@ const Confirmed = () => {
         })}
       />
     </Flex>
-  );
-};
+  )
+}
 
-export default Confirmed;
+export default Confirmed
