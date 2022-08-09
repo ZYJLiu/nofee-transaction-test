@@ -31,7 +31,7 @@ type ErrorOutput = {
 
 function get(res: NextApiResponse<MakeTransactionGetResponse>) {
   res.status(200).json({
-    label: "Get Promo",
+    label: "Redeem Promo",
     icon: "https://www.arweave.net/zdzBTTQW0V9jTyQWH_pE6D0xIKjnuxl9j9jtEs7Rk4g?ext=png",
   })
 }
