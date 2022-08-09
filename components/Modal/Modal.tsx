@@ -45,7 +45,7 @@ const QrModal = ({ onClose, isOpen }: any) => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const connection = new Connection(clusterApiUrl("devnet"))
+        const connection = new Connection(clusterApiUrl("mainnet-beta"))
 
         if (!connection) return
 

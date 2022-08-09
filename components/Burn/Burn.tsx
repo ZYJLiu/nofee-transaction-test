@@ -10,7 +10,7 @@ const Burn = () => {
       <FormControl display="center" alignItems="center">
         <QrModal onClose={onClose} isOpen={isOpen} />
         <Button display="center" alignItems="center" onClick={onOpen}>
-          Burn
+          Redeem Promo
         </Button>
       </FormControl>
     </Flex>

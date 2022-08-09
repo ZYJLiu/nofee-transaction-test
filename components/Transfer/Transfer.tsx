@@ -9,7 +9,7 @@ const Transfer = () => {
     <Flex width="100%" height="100vh">
       <FormControl display="center" alignItems="center">
         <QrModalTransfer onClose={onClose} isOpen={isOpen} />
-        <Button onClick={onOpen}>Transfer</Button>
+        <Button onClick={onOpen}>Get Promo</Button>
       </FormControl>
     </Flex>
   )

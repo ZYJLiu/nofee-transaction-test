@@ -31,12 +31,12 @@ type ErrorOutput = {
 
 function get(res: NextApiResponse<MakeTransactionGetResponse>) {
   res.status(200).json({
-    label: "Test",
-    icon: "https://freesvg.org/img/1370962427.png",
+    label: "Get Promo",
+    icon: "https://www.arweave.net/zdzBTTQW0V9jTyQWH_pE6D0xIKjnuxl9j9jtEs7Rk4g?ext=png",
   })
 }
 
-const network = "https://api.devnet.solana.com/"
+const network = "https://api.mainnet-beta.solana.com/"
 const connection = new Connection(network)
 
 async function post(
@@ -66,7 +66,7 @@ async function post(
 
     const buyerPK = new PublicKey(account)
 
-    const mintPK = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr")
+    const mintPK = new PublicKey("6ua4nf27E9WkxNziaWWA2Do95BmtHzaWiXEoGnRevuQN")
 
     // Build a transaction that burns 1 of this NFT
     const { blockhash } = await connection.getLatestBlockhash("finalized")
@@ -81,8 +81,8 @@ async function post(
       tokenAccountPK,
       mintPK,
       buyerPK,
-      1000000,
-      6
+      1,
+      0
     )
     burnIx.keys.push({
       pubkey: new PublicKey(reference),
@@ -107,7 +107,7 @@ async function post(
 
     res.status(200).json({
       transaction: base64,
-      message: "Successfully used coupon",
+      message: "Successfully used promo",
     })
   } catch (error) {
     console.error(error)
