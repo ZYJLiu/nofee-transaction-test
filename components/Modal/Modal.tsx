@@ -29,7 +29,7 @@ const QrModal = ({ onClose, isOpen }: any) => {
 
     const urlParams: TransactionRequestURLFields = {
       link: new URL(apiUrl),
-      label: "Juniverse",
+      label: "Test",
       message: "Thanks for your order!",
     }
 
